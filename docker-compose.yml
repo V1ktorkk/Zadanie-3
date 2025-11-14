@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  glossary-api:
+    build: .
+    container_name: glossary-dapp-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - ENV=production
+    volumes:
+      - ./app:/app/app
+      - glossary_data:/app/data
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  glossary_data:
+    driver: local
